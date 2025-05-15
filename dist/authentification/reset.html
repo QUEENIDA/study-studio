@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/signup.a53582e5.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <h2 class="mb-4 text-center">Password Reset</h2>
+                    <form id="reset-form">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" name="email" placeholder="Enter your email" required="">
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Send Reset Link</button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <a href="/authentification/signin.html" class="text-decoration-none">Back to Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>document.getElementById('reset-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    alert('Password reset link has been sent to your email.');
+// In a real application, you would send a request to your backend here
+});
+
+</script>
+
+
+<script src="/reset.900a840a.js"></script></body></html>

@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    
+body {
+    background-image: url('../images/bookshelt.jpg');
+    background-size: cover;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+* {
+    font-family: 'Poppins', Arial, sans-serif;
+}
+h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: white;
+}
+h3 {
+    font-weight: 500;
+    font-size: 1.3rem;
+    color: white;
+}
+h4 {
+    font-weight: 500;
+    font-size: 1.3rem;
+    color: white;
+}
+label {
+    font-weight: 300; 
+    font-size: 0.9rem;  
+}
+.form-label {
+    color:#024431;
+    font-weight: 400;
+}
+.btn-custom-secondary {
+    background-color: #81c784; 
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    font-size: 1rem; 
+    border-radius: 4px;
+}
+.btn-custom-secondary:hover {
+    background-color: #81c784;  
+    color: white;  
+}
+
+.btn-custom-primary {
+    background-color:#1b5e20; 
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    font-size: 1rem; 
+    border-radius: 4px;
+}
+
+.btn-custom-primary:hover {
+    background-color: #1b5e20;  
+    color: white;  
+}
+.custom-link {
+    color: #1b5e20; 
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-check-input:checked {
+    background-color: #1b5e20; 
+    border:#1b5e20;
+}
+input.form-control {
+    border: 1px solid #1b5e20;
+    border-radius: 4px;
+    padding: 8px;
+    margin: auto;
+}
+input::placeholder {
+    font-size: 0.9rem;
+    font-weight: 300;
+}

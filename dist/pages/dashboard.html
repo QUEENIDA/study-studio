@@ -1,0 +1,839 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Pulse Camp</title>    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/materials.775cb08c.css">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Chart.js for admin dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>:root {
+  --primary-color: #2e7d32;
+  --primary-light: #81c784;
+  --primary-lighter: #e8f5e9;
+  --accent-color: #ffb74d;
+  --pastel-pink: #ffd6e0;
+  --pastel-blue: #c0e6ff;
+  --pastel-purple: #e6d3ff;
+  --pastel-green: #d0f0c0;
+  --pastel-yellow: #fff4c0;
+  --text-dark: #333;
+  --text-light: #666;
+  --border-color: #ddd;
+  --shadow: 0 2px 10px #0000001a;
+  --admin-color: #6a1b9a;
+  --teacher-color: #0277bd;
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: 2rem;
+}
+
+.welcome-card {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  color: #fff;
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.teacher-welcome {
+  background: linear-gradient(135deg, #4fc3f7, var(--teacher-color));
+}
+
+.admin-welcome {
+  background: linear-gradient(135deg, #ba68c8, var(--admin-color));
+}
+
+.welcome-card:before {
+  content: "";
+  background: radial-gradient(circle, #ffffff1a 0%, #fff0 70%);
+  width: 200%;
+  height: 200%;
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  transform: rotate(30deg);
+}
+
+.streak-card {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.streak-number {
+  color: var(--primary-color);
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.schedule-card {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.schedule-item {
+  border-left: 3px solid var(--primary-color);
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.teacher-schedule-item {
+  border-left-color: var(--teacher-color);
+}
+
+.admin-schedule-item {
+  border-left-color: var(--admin-color);
+}
+
+.schedule-time {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.teacher-schedule-time {
+  color: var(--teacher-color);
+}
+
+.admin-schedule-time {
+  color: var(--admin-color);
+}
+
+.action-card {
+  cursor: pointer;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+  height: 100%;
+  padding: 1.5rem;
+  transition: all .3s;
+}
+
+.action-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-5px);
+}
+
+.action-icon {
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.student-action-icon {
+  color: var(--primary-color);
+}
+
+.teacher-action-icon {
+  color: var(--teacher-color);
+}
+
+.admin-action-icon {
+  color: var(--admin-color);
+}
+
+.sticker {
+  opacity: .9;
+  z-index: 1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+}
+
+.floating {
+  animation: 3s ease-in-out infinite floating;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.pulse {
+  animation: 2s infinite pulse;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.study-report {
+  background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-purple));
+  color: var(--text-dark);
+}
+
+.study-room {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-yellow));
+  color: var(--text-dark);
+}
+
+.classroom-card {
+  color: var(--text-dark);
+  background: linear-gradient(135deg, #b3e5fc, #4fc3f7);
+}
+
+.admin-card {
+  color: var(--text-dark);
+  background: linear-gradient(135deg, #e1bee7, #ba68c8);
+}
+
+.stats-card {
+  color: #fff;
+  background: linear-gradient(135deg, #d1c4e9, #7e57c2);
+}
+
+.quote-text {
+  margin-bottom: .5rem;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.quote-author {
+  opacity: .8;
+  font-size: .9rem;
+}
+
+.chart-container {
+  width: 100%;
+  height: 250px;
+  position: relative;
+}
+
+.btn-primary-custom {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-teacher-custom {
+  background-color: var(--teacher-color);
+  border-color: var(--teacher-color);
+  color: #fff;
+}
+
+.btn-admin-custom {
+  background-color: var(--admin-color);
+  border-color: var(--admin-color);
+  color: #fff;
+}
+
+.user-role-badge {
+  border-radius: 20px;
+  padding: .25rem .5rem;
+  font-size: .75rem;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.student-badge {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.teacher-badge {
+  background-color: var(--teacher-color);
+  color: #fff;
+}
+
+.admin-badge {
+  background-color: var(--admin-color);
+  color: #fff;
+}
+</style>
+</head>
+<body>
+    <div class="wrapper">
+        <aside id="sidebar" class="js-sidebar">
+            <!-- Content For Sidebar -->
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <a href="#"><i class="bi bi-command" style="color: #fff; margin-right: 5px"></i>Pulse Camp</a>
+                </div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">
+                       Pages
+                    </li>                    <li class="sidebar-item active">
+                        <a href="/pages/dashboard.html" class="sidebar-link">
+                            <i class="bi bi-sliders2-vertical" style="margin-right: 5px"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="sidebar-item student-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-textarea-t" style="margin-right: 5px"></i>GPA tracker
+                        </a>
+                    </li>
+                    <li class="sidebar-item student-item teacher-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-person-gear" style="margin-right: 5px"></i>
+                            <span class="student-text">Study Room</span>
+                            <span class="teacher-text">Classroom</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item student-item teacher-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-textarea-resize" style="margin-right: 5px"></i>My Courses
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-card-text" style="margin-right: 5px"></i>Scheduler
+                        </a>
+                    </li>
+                    <li class="sidebar-item admin-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-people-fill" style="margin-right: 5px"></i>User Management
+                        </a>
+                    </li>
+                    <li class="sidebar-item admin-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-bar-chart-line" style="margin-right: 5px"></i>Analytics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <div class="main">
+            <nav class="navbar navbar-expand px-3">
+                <button class="btn" id="sidebar-toggle" type="button" style="color: #002e79">
+                    <i class="bi bi-text-left" style="font-size: 1.5rem"></i> 
+                </button>
+                
+                <div class="navbar-collapse navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item me-3">
+                            <a href="#" class="nav-icon pe-md-0">
+                                <i class="bi bi-bell" style="color: #255c4c; margin-right: 5px; font-size: 1.2rem"></i>
+                                <span class="badge bg-danger" id="notification-count"></span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item me-3 dropdown">
+                            <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
+                                <i class="bi bi-person-circle" style="color: #255c4c; margin-right: 5px; font-size: 1.2rem"></i>
+                            </a>                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="#" class="dropdown-item">Profile</a>
+                                <a href="#" class="dropdown-item">Settings</a>
+                                <a href="/authentification/signin.html" class="dropdown-item">Log Out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        
+            <main class="content px-3 py-2">
+                <div class="container-fluid main-content">
+                    <!-- Welcome Section with Quote -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card welcome-card shadow-sm p-4" id="welcome-card">
+                                <span class="user-role-badge student-badge" id="role-badge">Student</span>
+                                <div class="row align-items-center">
+                                    <div class="col-md-8 position-relative">  
+                                        <h1 class="display-5 fw-bold mb-3">Welcome back, <span id="user-name">Alex</span>!</h1>
+                                        <div class="quote-box mb-3">
+                                            <p class="quote-text" id="daily-quote">"Education is the most powerful weapon which you can use to change the world."</p>
+                                            <p class="quote-author" id="quote-author">— Nelson Mandela</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student/Other Dashboard Content -->
+                    <div class="student-content">
+                        <!-- Streak and Schedule Section -->
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="card streak-card shadow-sm h-100">
+                                    <div class="position-relative">
+                                        <h4 class="mb-3">Study Streak</h4>
+                                        <div class="streak-number animate__animated animate__pulse animate__infinite" id="streak-count">7</div>
+                                        <p class="mb-0">days in a row! 🌟</p>
+                                        <small class="text-muted">You're on fire! 🔥</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card schedule-card shadow-sm p-4 h-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="mb-0">Today's Schedule</h4>
+                                        <a href="#" class="btn btn-sm btn-primary-custom">View All</a>
+                                    </div>
+                                    
+                                    <div id="today-schedule">
+                                        <div class="schedule-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-1">Mathematics 101</h5>
+                                                <span class="schedule-time">09:00 - 10:30</span>
+                                            </div>
+                                            <p class="mb-0 text-muted">Room 204 - Linear Algebra</p>
+                                        </div>
+                                        
+                                        <div class="schedule-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-1">Computer Science</h5>
+                                                <span class="schedule-time">13:00 - 14:30</span>
+                                            </div>
+                                            <p class="mb-0 text-muted">Room 312 - Data Structures</p>
+                                        </div>
+                                        
+                                        <div class="text-center py-3" id="no-schedule" style="display: none">
+                                            <i class="bi bi-calendar-x fs-1 text-muted mb-2"></i>
+                                            <p class="mb-0 text-muted">No classes scheduled for today</p>
+                                            <a href="#" class="btn btn-sm btn-primary-custom mt-2">Plan your week</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions Section -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm study-report">
+                                    <div class="position-relative">
+                                        <div class="sticker floating" style="background-image: url(&quot;https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4c8.svg&quot;); top: -20px; right: -10px"></div>
+                                        <i class="bi bi-graph-up action-icon student-action-icon"></i>
+                                        <h5>Weekly Study Report</h5>
+                                        <p class="mb-0 small">Get insights into your study patterns</p>
+                                        <button class="btn btn-sm btn-primary-custom mt-3">View Report 🌱</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm study-room">
+                                    <div class="position-relative">
+                                        <div class="sticker floating" style="background-image: url(&quot;https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4bb.svg&quot;); top: -20px; right: -10px"></div>
+                                        <div class="sticker" style="background-image: url(&quot;https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f33f.svg&quot;); width: 60px; height: 60px; bottom: -10px; left: -10px"></div>
+                                        <i class="bi bi-lamp action-icon student-action-icon"></i>
+                                        <h5>Study Room</h5>
+                                        <p class="mb-0 small">Focus mode with friends</p>
+                                        <button class="btn btn-sm btn-primary-custom mt-3">Start Studying 📚</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Dashboard Content -->
+                    <div class="teacher-content" style="display: none">
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="card schedule-card shadow-sm p-4 h-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="mb-0">Today's Classes</h4>
+                                        <a href="#" class="btn btn-sm btn-teacher-custom">View All</a>
+                                    </div>
+                                    
+                                    <div id="teacher-schedule">
+                                        <div class="schedule-item teacher-schedule-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-1">Mathematics 101</h5>
+                                                <span class="schedule-time teacher-schedule-time">09:00 - 10:30</span>
+                                            </div>
+                                            <p class="mb-0 text-muted">Room 204 - Linear Algebra (25 students)</p>
+                                        </div>
+                                        
+                                        <div class="schedule-item teacher-schedule-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-1">Advanced Calculus</h5>
+                                                <span class="schedule-time teacher-schedule-time">13:00 - 14:30</span>
+                                            </div>
+                                            <p class="mb-0 text-muted">Room 312 (18 students)</p>
+                                        </div>
+                                        
+                                        <div class="text-center py-3" id="teacher-no-schedule" style="display: none">
+                                            <i class="bi bi-calendar-x fs-1 text-muted mb-2"></i>
+                                            <p class="mb-0 text-muted">No classes scheduled for today</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm classroom-card">
+                                    <i class="bi bi-easel action-icon teacher-action-icon"></i>
+                                    <h5>Classroom Management</h5>
+                                    <p class="mb-0 small">Manage your classes and students</p>
+                                    <button class="btn btn-sm btn-teacher-custom mt-3">Go to Classroom 🏫</button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm">
+                                    <i class="bi bi-journal-text action-icon teacher-action-icon"></i>
+                                    <h5>Grade Assignments</h5>
+                                    <p class="mb-0 small">Review and grade student submissions</p>
+                                    <button class="btn btn-sm btn-teacher-custom mt-3">Grade Papers ✏️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Dashboard Content -->
+                    <div class="admin-content" style="display: none">
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="card stats-card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <h4 class="mb-3">System Stats</h4>
+                                        <div class="streak-number">1,248</div>
+                                        <p class="mb-0">Active Users</p>
+                                        <small class="text-white-50">+24 this week</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="card stats-card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <h4 class="mb-3">Courses</h4>
+                                        <div class="streak-number">87</div>
+                                        <p class="mb-0">Active Courses</p>
+                                        <small class="text-white-50">12 new this month</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card stats-card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <h4 class="mb-3">Teachers</h4>
+                                        <div class="streak-number">42</div>
+                                        <p class="mb-0">Active Instructors</p>
+                                        <small class="text-white-50">3 on leave</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <div class="card shadow-sm p-4 h-100">
+                                    <h4 class="mb-3">User Activity</h4>
+                                    <div class="chart-container">
+                                        <canvas id="activityChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm p-4 h-100">
+                                    <h4 class="mb-3">Quick Actions</h4>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-admin-custom mb-2">
+                                            <i class="bi bi-people-fill me-2"></i> Manage Users
+                                        </button>
+                                        <button class="btn btn-admin-custom mb-2">
+                                            <i class="bi bi-book me-2"></i> Manage Courses
+                                        </button>
+                                        <button class="btn btn-admin-custom mb-2">
+                                            <i class="bi bi-gear me-2"></i> System Settings
+                                        </button>
+                                        <button class="btn btn-admin-custom mb-2">
+                                            <i class="bi bi-bar-chart me-2"></i> View Reports
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm admin-card">
+                                    <i class="bi bi-shield-lock action-icon admin-action-icon"></i>
+                                    <h5>Admin Controls</h5>
+                                    <p class="mb-0 small">System configuration and settings</p>
+                                    <button class="btn btn-sm btn-admin-custom mt-3">Access Panel ⚙️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="card action-card shadow-sm">
+                                    <i class="bi bi-file-earmark-text action-icon admin-action-icon"></i>
+                                    <h5>Reports</h5>
+                                    <p class="mb-0 small">Generate system-wide reports</p>
+                                    <button class="btn btn-sm btn-admin-custom mt-3">Generate Reports 📊</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-start">
+                            <p class="mb-0">
+                                <a href="#" class="text-muted">
+                                    <strong>@PulseCamp</strong>
+                                </a>
+                            </p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <a href="#" class="text-muted">About Us</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="#" class="text-muted">Confidentiality</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>document.addEventListener('DOMContentLoaded', function() {
+    // Simulate user login - in a real app, this would come from your authentication system
+    const userRoles = [
+        'student',
+        'teacher',
+        'admin'
+    ];
+    const randomRole = userRoles[Math.floor(Math.random() * userRoles.length)]; // For demo, randomly select a role
+    // const userRole = 'student'; // Uncomment to test specific roles
+    // For demo purposes, you can change this to 'student', 'teacher', or 'admin'
+    const userRole = randomRole;
+    setupDashboard(userRole);
+    // Add role class to body element
+    document.body.classList.add(userRole + '-role');
+    // Fetch user data (simulated)
+    fetchUserData(userRole);
+    // Fetch daily quote (simulated)
+    fetchDailyQuote();
+    // Fetch schedule (simulated)
+    fetchSchedule(userRole);
+    // Set up dashboard based on user role
+    function setupDashboard(role) {
+        // Hide all content sections first
+        document.querySelector('.student-content').style.display = 'none';
+        document.querySelector('.teacher-content').style.display = 'none';
+        document.querySelector('.admin-content').style.display = 'none';
+        // Hide all sidebar items first
+        document.querySelectorAll('.sidebar-item').forEach((item)=>{
+            item.style.display = 'none';
+        });
+        // Show general sidebar items
+        document.querySelectorAll('.sidebar-header, .sidebar-item:not(.student-item):not(.teacher-item):not(.admin-item)').forEach((item)=>{
+            item.style.display = 'block';
+        });
+        // Update welcome card styling and role badge
+        const welcomeCard = document.getElementById('welcome-card');
+        const roleBadge = document.getElementById('role-badge');
+        // Remove all role classes first
+        welcomeCard.classList.remove('teacher-welcome', 'admin-welcome');
+        roleBadge.classList.remove('student-badge', 'teacher-badge', 'admin-badge');
+        if (role === 'teacher') {
+            document.querySelector('.teacher-content').style.display = 'block';
+            welcomeCard.classList.add('teacher-welcome');
+            roleBadge.classList.add('teacher-badge');
+            roleBadge.textContent = 'Teacher';
+            // Show teacher-specific sidebar items
+            document.querySelectorAll('.teacher-item').forEach((item)=>{
+                item.style.display = 'block';
+            });
+        } else if (role === 'admin') {
+            document.querySelector('.admin-content').style.display = 'block';
+            welcomeCard.classList.add('admin-welcome');
+            roleBadge.classList.add('admin-badge');
+            roleBadge.textContent = 'Administrator';
+            // Show admin-specific sidebar items
+            document.querySelectorAll('.admin-item').forEach((item)=>{
+                item.style.display = 'block';
+            });
+            // Initialize admin charts
+            initAdminCharts();
+        } else {
+            document.querySelector('.student-content').style.display = 'block';
+            roleBadge.classList.add('student-badge');
+            roleBadge.textContent = role === 'student' ? 'Student' : 'User';
+            // Show student-specific sidebar items
+            document.querySelectorAll('.student-item').forEach((item)=>{
+                item.style.display = 'block';
+            });
+        }
+    }
+    // Simulate fetching user data
+    function fetchUserData(role) {
+        // In a real app, this would come from your backend
+        setTimeout(()=>{
+            const names = {
+                student: 'Alex Johnson',
+                teacher: 'Dr. Sarah Miller',
+                admin: 'Admin User'
+            };
+            const streaks = {
+                student: Math.floor(Math.random() * 20) + 1,
+                teacher: 0,
+                admin: 0
+            };
+            document.getElementById('user-name').textContent = names[role] || 'User';
+            if (role === 'student') document.getElementById('streak-count').textContent = streaks.student;
+        }, 500);
+    }
+    // Simulate fetching daily quote
+    function fetchDailyQuote() {
+        const quotes = [
+            {
+                text: "Education is the most powerful weapon which you can use to change the world.",
+                author: "Nelson Mandela"
+            },
+            {
+                text: "The beautiful thing about learning is that no one can take it away from you.",
+                author: "B.B. King"
+            },
+            {
+                text: "Success is the sum of small efforts, repeated day in and day out.",
+                author: "Robert Collier"
+            },
+            {
+                text: "The expert in anything was once a beginner.",
+                author: "Helen Hayes"
+            },
+            {
+                text: "Learning is like rowing upstream: not to advance is to drop back.",
+                author: "Chinese Proverb"
+            },
+            {
+                text: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.",
+                author: "Dr. Seuss"
+            }
+        ];
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById('daily-quote').textContent = `"${randomQuote.text}"`;
+        document.getElementById('quote-author').textContent = `\u{2014} ${randomQuote.author}`;
+    }
+    // Simulate fetching schedule
+    function fetchSchedule(role) {
+        // In a real app, this would come from your scheduler page
+        if (role === 'teacher') {
+            // For teachers, we show their teaching schedule
+            document.getElementById('teacher-no-schedule').style.display = 'none';
+            document.querySelectorAll('#teacher-schedule .schedule-item').forEach((item)=>{
+                item.style.display = 'block';
+            });
+        } else if (role === 'admin') ;
+        else // For students, randomly show "no schedule" sometimes
+        if (Math.random() > 0.3) {
+            document.getElementById('no-schedule').style.display = 'block';
+            document.querySelectorAll('#today-schedule .schedule-item').forEach((item)=>{
+                item.style.display = 'none';
+            });
+        } else {
+            document.getElementById('no-schedule').style.display = 'none';
+            document.querySelectorAll('#today-schedule .schedule-item').forEach((item)=>{
+                item.style.display = 'block';
+            });
+        }
+    }
+    // Initialize admin charts
+    function initAdminCharts() {
+        // Activity chart
+        const activityCtx = document.getElementById('activityChart').getContext('2d');
+        const activityChart = new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul'
+                ],
+                datasets: [
+                    {
+                        label: 'Active Users',
+                        data: [
+                            650,
+                            790,
+                            900,
+                            1020,
+                            1150,
+                            1200,
+                            1248
+                        ],
+                        borderColor: '#ba68c8',
+                        backgroundColor: 'rgba(186, 104, 200, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Course Enrollments',
+                        data: [
+                            1200,
+                            1400,
+                            1600,
+                            1850,
+                            2100,
+                            2300,
+                            2500
+                        ],
+                        borderColor: '#7e57c2',
+                        backgroundColor: 'rgba(126, 87, 194, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+});
+
+</script>
+
+<script src="/dashboard.f3d2e6b0.js"></script></body></html>

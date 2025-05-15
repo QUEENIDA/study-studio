@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Group Chat</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --pastel-mint: #d4f1e5;
+            --pastel-teal: #b2e0d0;
+            --pastel-sage: #e0e8c5;
+            --pastel-olive: #d8e2b2;
+            --pastel-forest: #c1d7ae;
+            --accent-green: #81c784;
+            --dark-green: #2e7d32;
+            --light-grey: #f8f9fa;
+            --soft-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            --paper-texture: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="white" opacity="0.8"/><path d="M0 0 L100 100 M100 0 L0 100" stroke="%23b2e0d0" stroke-width="0.5" opacity="0.3"/></svg>');
+        }
+        
+        body {
+            background-color: var(--pastel-mint);
+            font-family: 'Comic Neue', cursive, sans-serif;
+            background-image: var(--paper-texture);
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Group info header */
+        .group-header {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 2px dashed var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--soft-shadow);
+            z-index: 10;
+            background-image: var(--paper-texture);
+        }
+        
+        .group-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .group-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--dark-green);
+            margin-left: 10px;
+            margin-bottom: 0;
+        }
+        
+        .member-count {
+            background-color: var(--pastel-sage);
+            color: var(--dark-green);
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .member-count i {
+            margin-right: 4px;
+        }
+        
+        .header-actions .btn {
+            margin-left: 8px;
+        }
+        
+        /* Main chat section */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            position: relative;
+            background-color: var(--light-grey);
+            border-right: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: var(--light-grey);
+            background-image: var(--paper-texture);
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            max-width: 75%;
+        }
+        
+        .message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--pastel-teal);
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        
+        .message-content {
+            background-color: white;
+            border-radius: 18px;
+            padding: 12px 15px;
+            box-shadow: var(--soft-shadow);
+            position: relative;
+        }
+        
+        .message.sent .message-content {
+            background-color: var(--pastel-teal);
+        }
+        
+        .message-sender {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--dark-green);
+            margin-bottom: 5px;
+        }
+        
+        .message-text {
+            margin-bottom: 0;
+            word-wrap: break-word;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .file-message {
+            display: flex;
+            align-items: center;
+            background-color: var(--pastel-sage);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+        
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--dark-green);
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        
+        .file-size {
+            font-size: 0.7rem;
+            color: #777;
+        }
+        
+        .file-actions {
+            margin-left: 10px;
+        }
+        
+        .file-actions .btn {
+            padding: 2px 8px;
+            font-size: 0.8rem;
+        }
+        
+        /* Chat Input area */
+        .chat-input-area {
+            background-color: white;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            background-image: var(--paper-texture);
+            position: relative;
+            z-index: 5;
+        }
+        
+        .chat-input-form {
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .message-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        .message-input {
+            border-radius: 20px;
+            border: 2px solid var(--pastel-teal);
+            padding: 10px 40px 10px 15px;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+            width: 100%;
+            background-color: white;
+        }
+        
+        .message-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+        
+        .attachment-button {
+            position: absolute;
+            right: 12px;
+            bottom: 10px;
+            border: none;
+            background: transparent;
+            color: var(--accent-green);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .attachment-button:hover {
+            color: var(--dark-green);
+        }
+        
+        .send-button {
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .send-button:hover {
+            background-color: var(--dark-green);
+            transform: scale(1.05);
+        }
+        
+        /* Resources sidebar */
+        .resources-section {
+            width: 300px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(0,0,0,0.1);
+            background-image: var(--paper-texture);
+            transition: all 0.3s;
+        }
+        
+        .resources-header {
+            padding: 15px;
+            border-bottom: 2px dashed var(--accent-green);
+            font-weight: bold;
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .resources-header h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+        
+        .resources-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .resource-item {
+            background-color: var(--light-grey);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .resource-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .resource-icon {
+            font-size: 1.8rem;
+            margin-right: 12px;
+            color: var(--dark-green);
+        }
+        
+        .resource-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .resource-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #777;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 5px;
+        }
+        
+        .resource-actions button {
+            background: none;
+            border: none;
+            color: var(--dark-green);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .resource-actions button:hover {
+            background-color: var(--pastel-mint);
+        }
+        
+        /* Tasks section */
+        .tasks-section {
+            width: 300px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(0,0,0,0.1);
+            background-image: var(--paper-texture);
+            transition: all 0.3s;
+        }
+        
+        .tasks-header {
+            padding: 15px;
+            border-bottom: 2px dashed var(--accent-green);
+            font-weight: bold;
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .tasks-header h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+        
+        .add-task-btn {
+            background-color: var(--pastel-teal);
+            color: var(--dark-green);
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-task-btn:hover {
+            background-color: var(--accent-green);
+            color: white;
+        }
+        
+        .tasks-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .task-item {
+            background-color: var(--light-grey);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: var(--soft-shadow);
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .task-checkbox {
+            margin-right: 10px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        
+        .task-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-green);
+        }
+        
+        .task-title {
+            font-weight: bold;
+            color: var(--dark-green);
+            flex: 1;
+            line-height: 1.3;
+        }
+        
+        .completed .task-title {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        .task-due {
+            font-size: 0.75rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .task-due i {
+            margin-right: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .task-assignee {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .task-assignee i {
+            margin-right: 4px;
+        }
+        
+        /* Mobile responsive design */
+        @media (max-width: 992px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .resources-section, .tasks-section {
+                width: 100%;
+                max-height: 300px;
+                border-left: none;
+                border-top: 1px solid rgba(0,0,0,0.1);
+            }
+            
+            .resources-header, .tasks-header {
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .chat-messages {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+        
+        /* Toggle buttons for mobile */
+        .mobile-toggles {
+            display: none;
+            background-color: white;
+            border-top: 1px solid #eee;
+            padding: 10px;
+            justify-content: space-around;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: var(--dark-green);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn.active {
+            background-color: var(--pastel-teal);
+            font-weight: bold;
+        }
+        
+        .toggle-btn i {
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-toggles {
+                display: flex;
+            }
+            
+            .resources-section, .tasks-section {
+                display: none;
+                position: absolute;
+                top: 67px; /* Height of group header */
+                bottom: 60px; /* Height of mobile toggles */
+                left: 0;
+                right: 0;
+                z-index: 10;
+            }
+            
+            .resources-section.active, .tasks-section.active {
+                display: flex;
+            }
+            
+            .chat-section {
+                margin-bottom: 50px; /* Height of mobile toggles */
+            }
+        }
+        
+        /* Import Comic Neue font */
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Chat Section -->
+        <div class="chat-section">
+            <!-- Group Header -->
+            <div class="group-header">
+                <div class="group-info">
+                    <button class="btn btn-outline-secondary btn-sm" id="backButton">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <h1 class="group-name" id="groupNameHeader">Group Name</h1>
+                    <span class="member-count"><i class="bi bi-people-fill"></i> <span id="memberCount">0</span></span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-person-plus"></i> Invite
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be loaded here -->
+            </div>
+            
+            <!-- Chat Input Area -->
+            <div class="chat-input-area">
+                <form class="chat-input-form" id="chatForm">
+                    <div class="message-input-wrapper">
+                        <textarea class="message-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                        <button type="button" class="attachment-button" id="attachmentButton">
+                            <i class="bi bi-paperclip"></i>
+                        </button>
+                        <input type="file" id="fileInput" style="display: none">
+                    </div>
+                    <button type="submit" class="send-button">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Mobile section toggles -->
+            <div class="mobile-toggles">
+                <div class="toggle-btn active" data-target="chat">
+                    <i class="bi bi-chat-dots-fill"></i> Chat
+                </div>
+                <div class="toggle-btn" data-target="resources">
+                    <i class="bi bi-folder2-open"></i> Resources
+                </div>
+                <div class="toggle-btn" data-target="tasks">
+                    <i class="bi bi-check2-square"></i> Tasks
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resources Section -->
+        <div class="resources-section" id="resourcesSection">
+            <div class="resources-header">
+                <h2><i class="bi bi-folder2-open"></i> Shared Resources</h2>
+            </div>
+            <div class="resources-list" id="resourcesList">
+                <!-- Resources will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Tasks Section -->
+        <div class="tasks-section" id="tasksSection">
+            <div class="tasks-header">
+                <h2><i class="bi bi-check2-square"></i> Group Tasks</h2>
+                <button class="add-task-btn" id="addTaskBtn">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+            <div class="tasks-list" id="tasksList">
+                <!-- Tasks will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Task Modal -->
+    <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTaskModalLabel">
+                        <i class="bi bi-check2-square"></i> Create New Task
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createTaskForm">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Task Title</label>
+                            <input type="text" class="form-control" id="taskTitle" placeholder="What needs to be done?" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="taskDescription" rows="3" placeholder="Add more details about this task"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="taskDueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="taskDueDate">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="taskAssignee" class="form-label">Assign To</label>
+                            <select class="form-select" id="taskAssignee">
+                                <option value="" selected>Anyone</option>
+                                <!-- Members will be loaded here -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary-custom" id="createTaskBtn">
+                        <i class="bi bi-plus-circle"></i> Create Task
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const fileInput = document.getElementById('fileInput');
+        const attachmentButton = document.getElementById('attachmentButton');
+        const resourcesList = document.getElementById('resourcesList');
+        const tasksList = document.getElementById('tasksList');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const createTaskBtn = document.getElementById('createTaskBtn');
+        const backButton = document.getElementById('backButton');
+        const groupNameHeader = document.getElementById('groupNameHeader');
+        const memberCountElement = document.getElementById('memberCount');
+        const toggleButtons = document.querySelectorAll('.toggle-btn');
+        
+        // Get URL parameters to load correct group
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('group');
+        
+        // Sample data - in a real app, this would be loaded from your backend or database
+        let currentGroup = {
+            id: '',
+            name: 'Loading...',
+            members: []
+        };
+        
+        let messages = [];
+        let resources = [];
+        let tasks = [];
+        
+        // Initialize the chat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGroup();
+            setupEventListeners();
+            renderMessages();
+            renderResources();
+            renderTasks();
+            
+            // Auto-grow textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        });
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Send message on form submit
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+            
+            // Handle file attachment
+            attachmentButton.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    shareFile(this.files[0]);
+                }
+            });
+            
+            // Task creation
+            addTaskBtn.addEventListener('click', function() {
+                loadMembersIntoTaskForm();
+                const taskModal = new bootstrap.Modal(document.getElementById('createTaskModal'));
+                taskModal.show();
+            });
+            
+            createTaskBtn.addEventListener('click', createNewTask);
+            
+            // Back button
+            backButton.addEventListener('click', function() {
+                window.location.href = 'materials.html';
+            });
+            
+            // Mobile toggles
+            toggleButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    toggleSection(target);
+                });
+            });
+        }
+        
+        // Load group data
+        function loadGroup() {
+            // In a real app, this would make an API call to get the group data
+            const storedGroups = JSON.parse(localStorage.getItem('fluffyGroups')) || [];
+            const group = storedGroups.find(g => g.id === groupId);
+            
+            if (group) {
+                currentGroup = group;
+                groupNameHeader.textContent = group.name;
+                memberCountElement.textContent = group.members.length;
+                
+                // Load sample data for this group
+                loadSampleData();
+            } else {
+                alert('Group not found!');
+                window.location.href = 'materials.html';
+            }
+        }
+        
+        // Load sample data for demonstration
+        function loadSampleData() {
+            // Sample messages
+            messages = [
+                {
+                    id: 'm1',
+                    sender: 'johndoe',
+                    text: 'Hey everyone! Ready for our study session?',
+                    time: '10:30 AM',
+                    isYou: false
+                },
+                {
+                    id: 'm2',
+                    sender: 'maryjane',
+                    text: 'Yes! I brought my notes from the last lecture.',
+                    time: '10:32 AM',
+                    isYou: false
+                },
+                {
+                    id: 'm3',
+                    sender: 'you',
+                    text: "I'm here too! I had some questions about chapter 5.",
+                    time: '10:33 AM',
+                    isYou: true
+                },
+                {
+                    id: 'm4',
+                    sender: 'johndoe',
+                    text: 'Check out this PDF I found, it explains the concept really well.',
+                    time: '10:35 AM',
+                    isYou: false,
+                    file: {
+                        name: 'Chapter5_Explained.pdf',
+                        size: '2.4 MB',
+                        type: 'pdf'
+                    }
+                }
+            ];
+            
+            // Sample resources
+            resources = [
+                {
+                    id: 'r1',
+                    name: 'Chapter5_Explained.pdf',
+                    type: 'pdf',
+                    size: '2.4 MB',
+                    uploadedBy: 'johndoe',
+                    uploadedAt: '10:35 AM'
+                },
+                {
+                    id: 'r2',
+                    name: 'Lecture_Notes_Week3.docx',
+                    type: 'document',
+                    size: '1.2 MB',
+                    uploadedBy: 'maryjane',
+                    uploadedAt: 'Yesterday'
+                },
+                {
+                    id: 'r3',
+                    name: 'Study_Plan.xlsx',
+                    type: 'spreadsheet',
+                    size: '890 KB',
+                    uploadedBy: 'you',
+                    uploadedAt: '2 days ago'
+                }
+            ];
+            
+            // Sample tasks
+            tasks = [
+                {
+                    id: 't1',
+                    title: 'Complete practice problems 1-10',
+                    dueDate: '2025-04-28',
+                    assignee: 'anyone',
+                    completed: false
+                },
+                {
+                    id: 't2',
+                    title: 'Review chapter 6 for quiz on Friday',
+                    dueDate: '2025-04-30',
+                    assignee: 'you',
+                    completed: true
+                },
+                {
+                    id: 't3',
+                    title: 'Prepare presentation slides',
+                    dueDate: '2025-05-05',
+                    assignee: 'johndoe',
+                    completed: false
+                }
+            ];
+        }
+        
+        // Render messages in chat
+        function renderMessages() {
+            chatMessages.innerHTML = '';
+            
+            messages.forEach(message => {
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${message.isYou ? 'sent' : 'received'}`;
+                
+                let avatarInitial = message.sender.charAt(0).toUpperCase();
+                
+                let messageHTML = `
+                    <div class="message-avatar">${avatarInitial}</div>
+                    <div class="message-content">
+                        <div class="message-sender">${message.isYou ? 'You' : message.sender}</div>
+                        <p class="message-text">${message.text}</p>
+                `;
+                
+                if (message.file) {
+                    let fileIcon = getFileIcon(message.file.type);
+                    
+                    messageHTML += `
+                        <div class="file-message">
+                            <div class="file-icon">
+                                <i class="${fileIcon}"></i>
+                            </div>
+                            <div class="file-info">
+                                <p class="file-name">${message.file.name}</p>
+                                <span class="file-size">${message.file.size}</span>
+                            </div>
+                            <div class="file-actions">
+                                                               <button class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                messageHTML += `
+                        <div class="message-time">${message.time}</div>
+                    </div>
+                `;
+                
+                messageEl.innerHTML = messageHTML;
+                chatMessages.appendChild(messageEl);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Get file icon class based on file type
+        function getFileIcon(type) {
+            switch (type) {
+                case 'pdf':
+                    return 'bi bi-file-earmark-pdf';
+                case 'document':
+                    return 'bi bi-file-earmark-text';
+                case 'spreadsheet':
+                    return 'bi bi-file-earmark-spreadsheet';
+                case 'image':
+                    return 'bi bi-file-earmark-image';
+                case 'zip':
+                    return 'bi bi-file-earmark-zip';
+                default:
+                    return 'bi bi-file-earmark';
+            }
+        }
+
+        // Send a new message
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (text !== '') {
+                const newMessage = {
+                    id: 'm' + Date.now(),
+                    sender: 'you',
+                    text: text,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    isYou: true
+                };
+                messages.push(newMessage);
+                renderMessages();
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+            }
+        }
+
+        // Share a file
+        function shareFile(file) {
+            const newMessage = {
+                id: 'm' + Date.now(),
+                sender: 'you',
+                text: '',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                isYou: true,
+                file: {
+                    name: file.name,
+                    size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                    type: file.type.split('/')[0] // Simplified
+                }
+            };
+            messages.push(newMessage);
+            resources.push({
+                id: 'r' + Date.now(),
+                name: file.name,
+                type: file.type.split('/')[0],
+                size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                uploadedBy: 'you',
+                uploadedAt: 'Now'
+            });
+            renderMessages();
+            renderResources();
+        }
+
+        // Render resources
+        function renderResources() {
+            resourcesList.innerHTML = '';
+            resources.forEach(resource => {
+                const resourceEl = document.createElement('div');
+                resourceEl.className = 'resource-item';
+                resourceEl.innerHTML = `
+                    <div class="resource-icon">
+                        <i class="${getFileIcon(resource.type)}"></i>
+                    </div>
+                    <div class="resource-details">
+                        <div class="resource-name">${resource.name}</div>
+                        <div class="resource-meta">
+                            <span>${resource.uploadedBy}</span>
+                            <span>${resource.uploadedAt}</span>
+                        </div>
+                    </div>
+                `;
+                resourcesList.appendChild(resourceEl);
+            });
+        }
+
+        // Render tasks
+        function renderTasks() {
+            tasksList.innerHTML = '';
+            tasks.forEach(task => {
+                const taskEl = document.createElement('div');
+                taskEl.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskEl.innerHTML = `
+                    <div class="task-header">
+                        <div class="task-checkbox">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTaskComplete('${task.id}')">
+                        </div>
+                        <div class="task-title">${task.title}</div>
+                    </div>
+                    <div class="task-due"><i class="bi bi-calendar"></i> ${task.dueDate}</div>
+                    <div class="task-assignee"><i class="bi bi-person"></i> ${task.assignee}</div>
+                `;
+                tasksList.appendChild(taskEl);
+            });
+        }
+
+        // Toggle task complete
+        function toggleTaskComplete(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks();
+            }
+        }
+
+        // Create a new task
+        function createNewTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const dueDate = document.getElementById('taskDueDate').value;
+            const assignee = document.getElementById('taskAssignee').value || 'anyone';
+            
+            if (title !== '') {
+                tasks.push({
+                    id: 't' + Date.now(),
+                    title: title,
+                    dueDate: dueDate,
+                    assignee: assignee,
+                    completed: false
+                });
+                renderTasks();
+                
+                // Close modal
+                const taskModal = bootstrap.Modal.getInstance(document.getElementById('createTaskModal'));
+                taskModal.hide();
+                
+                // Reset form
+                document.getElementById('createTaskForm').reset();
+            }
+        }
+
+        // Load members into task form
+        function loadMembersIntoTaskForm() {
+            const assigneeSelect = document.getElementById('taskAssignee');
+            assigneeSelect.innerHTML = `<option value="" selected>Anyone</option>`;
+            currentGroup.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.username;
+                option.textContent = member.username;
+                assigneeSelect.appendChild(option);
+            });
+        }
+
+        // Toggle section on mobile
+        function toggleSection(target) {
+            const sections = ['chat', 'resources', 'tasks'];
+            sections.forEach(section => {
+                const sectionEl = document.getElementById(section + 'Section');
+                if (section === target) {
+                    sectionEl.classList.add('active');
+                } else {
+                    sectionEl.classList.remove('active');
+                }
+            });
+            toggleButtons.forEach(btn => {
+                if (btn.getAttribute('data-target') === target) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
